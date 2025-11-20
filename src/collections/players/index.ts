@@ -40,11 +40,10 @@ export const Players: CollectionConfig = {
   admin: {
     defaultColumns: ['name', 'slug', 'team', 'updatedAt'],
     livePreview: {
-      url: ({ data, req }) => {
+      url: ({ data }) => {
         const path = generatePreviewPath({
           slug: typeof data?.slug === 'string' ? data.slug : '',
           collection: 'players',
-          req,
         })
 
         return path
