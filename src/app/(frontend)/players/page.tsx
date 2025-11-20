@@ -6,36 +6,46 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
-import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
-// Use `any` for params to avoid TS build errors
-export default async function PlayersPage({ params }: any) {
-  const pageNumber = Number(params.pageNumber)
-  if (!Number.isInteger(pageNumber) || pageNumber < 1) notFound()
 
+export default async function Page() {
   const payload = await getPayload({ config: configPromise })
+
   const players = await payload.find({
     collection: 'players',
     depth: 1,
-    limit: 12,
-    page: pageNumber,
+    limit: 20,
     overrideAccess: false,
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      bio: true,
+      date_of_birth: true,
+      position: true,
+      team: true,
+      slug: true,
+      categories: true,
+      meta: true,
+    },
   })
 
   return (
     <div className="pt-24 pb-24">
       <PageClient />
       <div className="container mb-16">
-        <h1 className="prose dark:prose-invert max-w-none">Players</h1>
+        <div className="prose dark:prose-invert max-w-none">
+          <h1>Players</h1>
+        </div>
       </div>
 
       <div className="container mb-8">
         <PageRange
           collection="players"
           currentPage={players.page}
-          limit={12}
+          limit={20}
           totalDocs={players.totalDocs}
         />
       </div>
@@ -43,7 +53,7 @@ export default async function PlayersPage({ params }: any) {
       <CollectionArchivePlayers players={players.docs} />
 
       <div className="container">
-        {players.page && players.totalPages > 1 && (
+        {players.totalPages > 1 && players.page && (
           <Pagination page={players.page} totalPages={players.totalPages} />
         )}
       </div>
@@ -51,29 +61,8 @@ export default async function PlayersPage({ params }: any) {
   )
 }
 
-// ✅ Metadata stays safe
-export async function generateMetadata({ params }: any): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return {
-    title: `Players Page ${params.pageNumber}`,
+    title: `Payload Website Template Posts`,
   }
-}
-
-// ✅ Guarded generateStaticParams
-export async function generateStaticParams(): Promise<{ pageNumber: string }[]> {
-  // Skip DB calls during Railway build
-  if (process.env.NODE_ENV === 'production' && process.env.RAILWAY_ENVIRONMENT) {
-    console.warn('⚠️ Skipping generateStaticParams at build (no DB connection).')
-    return []
-  }
-
-  const payload = await getPayload({ config: configPromise })
-  const { totalDocs } = await payload.count({
-    collection: 'players',
-    overrideAccess: false,
-  })
-  const totalPages = Math.ceil(totalDocs / 12)
-
-  return Array.from({ length: totalPages }, (_, i) => ({
-    pageNumber: String(i + 1),
-  }))
 }
