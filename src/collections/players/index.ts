@@ -219,7 +219,6 @@ export const Players: CollectionConfig = {
       autosave: {
         interval: 100,
       },
-      schedulePublish: true,
     },
     maxPerDoc: 50,
   },
