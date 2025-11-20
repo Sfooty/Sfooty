@@ -1,7 +1,7 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
+import { type MigrateUpArgs, type MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
-  await db.execute(sql`
+export async function up({ payload }: MigrateUpArgs): Promise<void> {
+  await payload.db.drizzle.execute(sql`
    CREATE TYPE "public"."enum_players_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__players_v_version_status" AS ENUM('draft', 'published');
   CREATE TABLE "users_sessions" (
@@ -123,11 +123,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_payload_kv_fk" FOREIGN KEY ("payload_kv_id") REFERENCES "public"."payload_kv"("id") ON DELETE cascade ON UPDATE no action;
   CREATE INDEX "payload_locked_documents_rels_players_id_idx" ON "payload_locked_documents_rels" USING btree ("players_id");
   CREATE INDEX "payload_locked_documents_rels_payload_kv_id_idx" ON "payload_locked_documents_rels" USING btree ("payload_kv_id");
-  CREATE UNIQUE INDEX "redirects_from_idx" ON "redirects" USING btree ("from");`)
+  CREATE UNIQUE INDEX "redirects_from_idx" ON "redirects" USING btree ("from");
+  `)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
-  await db.execute(sql`
+export async function down({ payload }: MigrateDownArgs): Promise<void> {
+  await payload.db.drizzle.execute(sql`
    ALTER TABLE "users_sessions" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "players_populated_authors" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "players" DISABLE ROW LEVEL SECURITY;
@@ -141,9 +142,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "_players_v" CASCADE;
   DROP TABLE "payload_kv" CASCADE;
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_players_fk";
-  
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_payload_kv_fk";
-  
   DROP INDEX "payload_locked_documents_rels_players_id_idx";
   DROP INDEX "payload_locked_documents_rels_payload_kv_id_idx";
   DROP INDEX "redirects_from_idx";
@@ -153,5 +152,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "payload_locked_documents_rels" DROP COLUMN "players_id";
   ALTER TABLE "payload_locked_documents_rels" DROP COLUMN "payload_kv_id";
   DROP TYPE "public"."enum_players_status";
-  DROP TYPE "public"."enum__players_v_version_status";`)
+  DROP TYPE "public"."enum__players_v_version_status";
+  `)
 }
