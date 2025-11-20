@@ -825,6 +825,10 @@ export interface Redirect {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'players';
+          value: number | Player;
         } | null);
     url?: string | null;
   };
@@ -858,10 +862,15 @@ export interface Search {
   id: number;
   title?: string | null;
   priority?: number | null;
-  doc: {
-    relationTo: 'posts';
-    value: number | Post;
-  };
+  doc:
+    | {
+        relationTo: 'posts';
+        value: number | Post;
+      }
+    | {
+        relationTo: 'players';
+        value: number | Player;
+      };
   slug?: string | null;
   meta?: {
     title?: string | null;

@@ -26,7 +26,7 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 
 export const plugins: Plugin[] = [
   redirectsPlugin({
-    collections: ['pages', 'posts'],
+    collections: ['pages', 'posts', 'players'],
     overrides: {
       // @ts-expect-error
       fields: ({ defaultFields }) => {
@@ -81,7 +81,7 @@ export const plugins: Plugin[] = [
     },
   }),
   searchPlugin({
-    collections: ['posts'],
+    collections: ['posts', 'players'],
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
       fields: ({ defaultFields }) => {
