@@ -67,7 +67,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   return (
     <article className="pt-16 pb-24">
       <PageClient />
-      {/* Allows redirects for valid pages too */}
+      {/* Allows redirects for valid pages too  for*/}
       <PayloadRedirects disableNotFound url={url} />
 
       <RenderHero {...hero} />
