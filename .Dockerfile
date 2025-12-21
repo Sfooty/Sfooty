@@ -1,23 +1,37 @@
-FROM node:18.8-alpine as base
+# ---------- Base ----------
+FROM node:18-bullseye AS base
+WORKDIR /app
 
-FROM base as builder
+# ---------- Dependencies ----------
+FROM base AS deps
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
-WORKDIR /home/node/app
-COPY package*.json ./
+# ---------- Builder ----------
+FROM base AS builder
+WORKDIR /app
 
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN yarn install
+
+# Disable Payload prompt + ensure prod build
+ENV PAYLOAD_DISABLE_TELEMETRY=true
+ENV NODE_ENV=production
+
 RUN yarn build
 
-FROM base as runtime
+# ---------- Runtime ----------
+FROM node:18-bullseye AS runtime
+WORKDIR /app
 
 ENV NODE_ENV=production
 
-WORKDIR /home/node/app
-COPY package*.json  ./
-COPY yarn.lock ./
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --production
 
-RUN yarn install --production
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
