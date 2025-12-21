@@ -1,39 +1,31 @@
-import { createLocalReq, getPayload } from 'payload'
-import { seed } from '@/endpoints/seed'
-import config from '@payload-config'
-import { headers } from 'next/headers'
+import { createLocalReq, getPayload } from 'payload';
+import { seed } from '@/endpoints/seed';
+import config from '@payload-config';
+import { NextRequest, NextResponse } from 'next/server';
 
-const payloadToken = 'payload-token'
-export const maxDuration = 60 // This function can run for a maximum of 60 seconds
+export const maxDuration = 60; // Function can run for a maximum of 60 seconds
+const payloadToken = 'payload-token';
 
-export async function POST(
-  req: Request & {
-    cookies: {
-      get: (name: string) => {
-        value: string
-      }
-    }
-  },
-): Promise<Response> {
-  const payload = await getPayload({ config })
-  const requestHeaders = await headers()
+export async function POST(req: NextRequest) {
+  const payload = await getPayload({ config });
 
-  // Authenticate by passing request headers
-  const { user } = await payload.auth({ headers: requestHeaders })
+  // req.headers is already a Headers instance, just pass it directly
+  const { user } = await payload.auth({ headers: req.headers });
 
   if (!user) {
-    return new Response('Action forbidden.', { status: 403 })
+    return new NextResponse('Action forbidden.', { status: 403 });
   }
 
   try {
-    // Create a Payload request object to pass to the Local API for transactions
-    // At this point you should pass in a user, locale, and any other context you need for the Local API
-    const payloadReq = await createLocalReq({ user }, payload)
+    // Create a Payload local request object for internal API calls
+    const payloadReq = await createLocalReq({ user }, payload);
 
-    await seed({ payload, req: payloadReq })
+    // Call your seed function
+    await seed({ payload, req: payloadReq });
 
-    return Response.json({ success: true })
-  } catch {
-    return new Response('Error seeding data.')
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return new NextResponse('Error seeding data.', { status: 500 });
   }
 }
