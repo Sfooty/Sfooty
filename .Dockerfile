@@ -12,6 +12,8 @@ RUN yarn build
 FROM base as runtime
 
 ENV NODE_ENV=production
+ENV PAYLOAD_FORCE_MIGRATIONS=true
+ENV PAYLOAD_DISABLE_TELEMETRY=true
 
 WORKDIR /home/node/app
 COPY package*.json  ./
