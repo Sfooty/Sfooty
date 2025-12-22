@@ -43,8 +43,13 @@ export const PlayerGrid: React.FC<{
         {/* Player Information */}
        
           <div className="text-xs text-gray-600 basis-1/5">{position}</div>
-          <div className="text-xs text-gray-600 basis-1/5">{country} c</div>
-          <div className="text-xs text-gray-600 basis-1/5">{date_of_birth}</div>
+          <div className="text-xs text-gray-600 basis-1/5">
+          {country ? (typeof country === 'string' ? country : 'no country ') : '-'}
+          </div>
+          <div className="text-xs text-gray-600 basis-1/5">
+            {date_of_birth ? new Date(date_of_birth).toLocaleDateString('en-GB') : '-'}
+          </div>
+
 
         
       </div>
