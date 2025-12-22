@@ -1,5 +1,5 @@
 {
-  "id": "750b6a46-8817-4fa6-be06-8d679522a9c1",
+  "id": "75f95f3c-f2e4-4f3f-9ecd-af56ad12bf4d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1240,14 +1240,20 @@
           "primaryKey": false,
           "notNull": false
         },
-        "categories_id": {
-          "name": "categories_id",
+        "posts_id": {
+          "name": "posts_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "posts_id": {
-          "name": "posts_id",
+        "players_id": {
+          "name": "players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "categories_id": {
+          "name": "categories_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -1314,11 +1320,11 @@
           "method": "btree",
           "with": {}
         },
-        "pages_rels_categories_id_idx": {
-          "name": "pages_rels_categories_id_idx",
+        "pages_rels_posts_id_idx": {
+          "name": "pages_rels_posts_id_idx",
           "columns": [
             {
-              "expression": "categories_id",
+              "expression": "posts_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1329,11 +1335,26 @@
           "method": "btree",
           "with": {}
         },
-        "pages_rels_posts_id_idx": {
-          "name": "pages_rels_posts_id_idx",
+        "pages_rels_players_id_idx": {
+          "name": "pages_rels_players_id_idx",
           "columns": [
             {
-              "expression": "posts_id",
+              "expression": "players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "pages_rels_categories_id_idx": {
+          "name": "pages_rels_categories_id_idx",
+          "columns": [
+            {
+              "expression": "categories_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1372,12 +1393,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "pages_rels_categories_fk": {
-          "name": "pages_rels_categories_fk",
+        "pages_rels_posts_fk": {
+          "name": "pages_rels_posts_fk",
           "tableFrom": "pages_rels",
-          "tableTo": "categories",
+          "tableTo": "posts",
           "columnsFrom": [
-            "categories_id"
+            "posts_id"
           ],
           "columnsTo": [
             "id"
@@ -1385,12 +1406,25 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "pages_rels_posts_fk": {
-          "name": "pages_rels_posts_fk",
+        "pages_rels_players_fk": {
+          "name": "pages_rels_players_fk",
           "tableFrom": "pages_rels",
-          "tableTo": "posts",
+          "tableTo": "players",
           "columnsFrom": [
-            "posts_id"
+            "players_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "pages_rels_categories_fk": {
+          "name": "pages_rels_categories_fk",
+          "tableFrom": "pages_rels",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categories_id"
           ],
           "columnsTo": [
             "id"
@@ -2807,14 +2841,20 @@
           "primaryKey": false,
           "notNull": false
         },
-        "categories_id": {
-          "name": "categories_id",
+        "posts_id": {
+          "name": "posts_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "posts_id": {
-          "name": "posts_id",
+        "players_id": {
+          "name": "players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "categories_id": {
+          "name": "categories_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -2881,11 +2921,11 @@
           "method": "btree",
           "with": {}
         },
-        "_pages_v_rels_categories_id_idx": {
-          "name": "_pages_v_rels_categories_id_idx",
+        "_pages_v_rels_posts_id_idx": {
+          "name": "_pages_v_rels_posts_id_idx",
           "columns": [
             {
-              "expression": "categories_id",
+              "expression": "posts_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -2896,11 +2936,26 @@
           "method": "btree",
           "with": {}
         },
-        "_pages_v_rels_posts_id_idx": {
-          "name": "_pages_v_rels_posts_id_idx",
+        "_pages_v_rels_players_id_idx": {
+          "name": "_pages_v_rels_players_id_idx",
           "columns": [
             {
-              "expression": "posts_id",
+              "expression": "players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_pages_v_rels_categories_id_idx": {
+          "name": "_pages_v_rels_categories_id_idx",
+          "columns": [
+            {
+              "expression": "categories_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -2939,12 +2994,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "_pages_v_rels_categories_fk": {
-          "name": "_pages_v_rels_categories_fk",
+        "_pages_v_rels_posts_fk": {
+          "name": "_pages_v_rels_posts_fk",
           "tableFrom": "_pages_v_rels",
-          "tableTo": "categories",
+          "tableTo": "posts",
           "columnsFrom": [
-            "categories_id"
+            "posts_id"
           ],
           "columnsTo": [
             "id"
@@ -2952,12 +3007,25 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "_pages_v_rels_posts_fk": {
-          "name": "_pages_v_rels_posts_fk",
+        "_pages_v_rels_players_fk": {
+          "name": "_pages_v_rels_players_fk",
           "tableFrom": "_pages_v_rels",
-          "tableTo": "posts",
+          "tableTo": "players",
           "columnsFrom": [
-            "posts_id"
+            "players_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "_pages_v_rels_categories_fk": {
+          "name": "_pages_v_rels_categories_fk",
+          "tableFrom": "_pages_v_rels",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "categories_id"
           ],
           "columnsTo": [
             "id"
@@ -4696,6 +4764,94 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.users_sessions": {
+      "name": "users_sessions",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "users_sessions_order_idx": {
+          "name": "users_sessions_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "users_sessions_parent_id_idx": {
+          "name": "users_sessions_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "users_sessions_parent_id_fk": {
+          "name": "users_sessions_parent_id_fk",
+          "tableFrom": "users_sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.users": {
       "name": "users",
       "schema": "",
@@ -4824,6 +4980,924 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.comments": {
+      "name": "comments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author_name": {
+          "name": "author_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author_email": {
+          "name": "author_email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "post_id": {
+          "name": "post_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_approved": {
+          "name": "is_approved",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "comments_post_idx": {
+          "name": "comments_post_idx",
+          "columns": [
+            {
+              "expression": "post_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "comments_updated_at_idx": {
+          "name": "comments_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "comments_created_at_idx": {
+          "name": "comments_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "comments_post_id_posts_id_fk": {
+          "name": "comments_post_id_posts_id_fk",
+          "tableFrom": "comments",
+          "tableTo": "posts",
+          "columnsFrom": [
+            "post_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players_populated_authors": {
+      "name": "players_populated_authors",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "players_populated_authors_order_idx": {
+          "name": "players_populated_authors_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_populated_authors_parent_id_idx": {
+          "name": "players_populated_authors_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_populated_authors_parent_id_fk": {
+          "name": "players_populated_authors_parent_id_fk",
+          "tableFrom": "players_populated_authors",
+          "tableTo": "players",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.players": {
+      "name": "players",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "height": {
+          "name": "height",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weight": {
+          "name": "weight",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_id": {
+          "name": "image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "position": {
+          "name": "position",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shirt_number": {
+          "name": "shirt_number",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bio": {
+          "name": "bio",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meta_title": {
+          "name": "meta_title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meta_image_id": {
+          "name": "meta_image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "meta_description": {
+          "name": "meta_description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "slug_lock": {
+          "name": "slug_lock",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "_status": {
+          "name": "_status",
+          "type": "enum_players_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'draft'"
+        }
+      },
+      "indexes": {
+        "players_image_idx": {
+          "name": "players_image_idx",
+          "columns": [
+            {
+              "expression": "image_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_meta_meta_image_idx": {
+          "name": "players_meta_meta_image_idx",
+          "columns": [
+            {
+              "expression": "meta_image_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_slug_idx": {
+          "name": "players_slug_idx",
+          "columns": [
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_updated_at_idx": {
+          "name": "players_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players_created_at_idx": {
+          "name": "players_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "players__status_idx": {
+          "name": "players__status_idx",
+          "columns": [
+            {
+              "expression": "_status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "players_image_id_media_id_fk": {
+          "name": "players_image_id_media_id_fk",
+          "tableFrom": "players",
+          "tableTo": "media",
+          "columnsFrom": [
+            "image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "players_meta_image_id_media_id_fk": {
+          "name": "players_meta_image_id_media_id_fk",
+          "tableFrom": "players",
+          "tableTo": "media",
+          "columnsFrom": [
+            "meta_image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._players_v_version_populated_authors": {
+      "name": "_players_v_version_populated_authors",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "_uuid": {
+          "name": "_uuid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_players_v_version_populated_authors_order_idx": {
+          "name": "_players_v_version_populated_authors_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_version_populated_authors_parent_id_idx": {
+          "name": "_players_v_version_populated_authors_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_players_v_version_populated_authors_parent_id_fk": {
+          "name": "_players_v_version_populated_authors_parent_id_fk",
+          "tableFrom": "_players_v_version_populated_authors",
+          "tableTo": "_players_v",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public._players_v": {
+      "name": "_players_v",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_name": {
+          "name": "version_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_date_of_birth": {
+          "name": "version_date_of_birth",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_height": {
+          "name": "version_height",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_weight": {
+          "name": "version_weight",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_image_id": {
+          "name": "version_image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_position": {
+          "name": "version_position",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_shirt_number": {
+          "name": "version_shirt_number",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_country": {
+          "name": "version_country",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_bio": {
+          "name": "version_bio",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_published_at": {
+          "name": "version_published_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_meta_title": {
+          "name": "version_meta_title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_meta_image_id": {
+          "name": "version_meta_image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_meta_description": {
+          "name": "version_meta_description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_slug": {
+          "name": "version_slug",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_slug_lock": {
+          "name": "version_slug_lock",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "version_updated_at": {
+          "name": "version_updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_created_at": {
+          "name": "version_created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version__status": {
+          "name": "version__status",
+          "type": "enum__players_v_version_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'draft'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "latest": {
+          "name": "latest",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "autosave": {
+          "name": "autosave",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "_players_v_parent_idx": {
+          "name": "_players_v_parent_idx",
+          "columns": [
+            {
+              "expression": "parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_version_version_image_idx": {
+          "name": "_players_v_version_version_image_idx",
+          "columns": [
+            {
+              "expression": "version_image_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_version_meta_version_meta_image_idx": {
+          "name": "_players_v_version_meta_version_meta_image_idx",
+          "columns": [
+            {
+              "expression": "version_meta_image_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_version_version_slug_idx": {
+          "name": "_players_v_version_version_slug_idx",
+          "columns": [
+            {
+              "expression": "version_slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_version_version_updated_at_idx": {
+          "name": "_players_v_version_version_updated_at_idx",
+          "columns": [
+            {
+              "expression": "version_updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_version_version_created_at_idx": {
+          "name": "_players_v_version_version_created_at_idx",
+          "columns": [
+            {
+              "expression": "version_created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_version_version__status_idx": {
+          "name": "_players_v_version_version__status_idx",
+          "columns": [
+            {
+              "expression": "version__status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_created_at_idx": {
+          "name": "_players_v_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_updated_at_idx": {
+          "name": "_players_v_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_latest_idx": {
+          "name": "_players_v_latest_idx",
+          "columns": [
+            {
+              "expression": "latest",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "_players_v_autosave_idx": {
+          "name": "_players_v_autosave_idx",
+          "columns": [
+            {
+              "expression": "autosave",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "_players_v_parent_id_players_id_fk": {
+          "name": "_players_v_parent_id_players_id_fk",
+          "tableFrom": "_players_v",
+          "tableTo": "players",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "_players_v_version_image_id_media_id_fk": {
+          "name": "_players_v_version_image_id_media_id_fk",
+          "tableFrom": "_players_v",
+          "tableTo": "media",
+          "columnsFrom": [
+            "version_image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "_players_v_version_meta_image_id_media_id_fk": {
+          "name": "_players_v_version_meta_image_id_media_id_fk",
+          "tableFrom": "_players_v",
+          "tableTo": "media",
+          "columnsFrom": [
+            "version_meta_image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.redirects": {
       "name": "redirects",
       "schema": "",
@@ -4880,7 +5954,7 @@
               "nulls": "last"
             }
           ],
-          "isUnique": false,
+          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}
@@ -4962,6 +6036,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "players_id": {
+          "name": "players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -5039,6 +6119,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "redirects_rels_players_id_idx": {
+          "name": "redirects_rels_players_id_idx",
+          "columns": [
+            {
+              "expression": "players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -5074,6 +6169,19 @@
           "tableTo": "posts",
           "columnsFrom": [
             "posts_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "redirects_rels_players_fk": {
+          "name": "redirects_rels_players_fk",
+          "tableFrom": "redirects_rels",
+          "tableTo": "players",
+          "columnsFrom": [
+            "players_id"
           ],
           "columnsTo": [
             "id"
@@ -5857,6 +6965,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "placeholder": {
+          "name": "placeholder",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "required": {
           "name": "required",
           "type": "boolean",
@@ -6388,7 +7502,7 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": true,
-          "default": "'You''''ve received a new message.'"
+          "default": "'You''ve received a new message.'"
         },
         "message": {
           "name": "message",
@@ -6998,6 +8112,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "players_id": {
+          "name": "players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -7060,6 +8180,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "search_rels_players_id_idx": {
+          "name": "search_rels_players_id_idx",
+          "columns": [
+            {
+              "expression": "players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -7088,8 +8223,68 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "search_rels_players_fk": {
+          "name": "search_rels_players_fk",
+          "tableFrom": "search_rels",
+          "tableTo": "players",
+          "columnsFrom": [
+            "players_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payload_kv": {
+      "name": "payload_kv",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "key": {
+          "name": "key",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "payload_kv_key_idx": {
+          "name": "payload_kv_key_idx",
+          "columns": [
+            {
+              "expression": "key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -7239,6 +8434,18 @@
           "primaryKey": false,
           "notNull": false
         },
+        "comments_id": {
+          "name": "comments_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "players_id": {
+          "name": "players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "redirects_id": {
           "name": "redirects_id",
           "type": "integer",
@@ -7259,6 +8466,12 @@
         },
         "search_id": {
           "name": "search_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payload_kv_id": {
+          "name": "payload_kv_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -7385,6 +8598,36 @@
           "method": "btree",
           "with": {}
         },
+        "payload_locked_documents_rels_comments_id_idx": {
+          "name": "payload_locked_documents_rels_comments_id_idx",
+          "columns": [
+            {
+              "expression": "comments_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_players_id_idx": {
+          "name": "payload_locked_documents_rels_players_id_idx",
+          "columns": [
+            {
+              "expression": "players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "payload_locked_documents_rels_redirects_id_idx": {
           "name": "payload_locked_documents_rels_redirects_id_idx",
           "columns": [
@@ -7435,6 +8678,21 @@
           "columns": [
             {
               "expression": "search_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "payload_locked_documents_rels_payload_kv_id_idx": {
+          "name": "payload_locked_documents_rels_payload_kv_id_idx",
+          "columns": [
+            {
+              "expression": "payload_kv_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -7525,6 +8783,32 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
+        "payload_locked_documents_rels_comments_fk": {
+          "name": "payload_locked_documents_rels_comments_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "comments",
+          "columnsFrom": [
+            "comments_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_players_fk": {
+          "name": "payload_locked_documents_rels_players_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "players",
+          "columnsFrom": [
+            "players_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "payload_locked_documents_rels_redirects_fk": {
           "name": "payload_locked_documents_rels_redirects_fk",
           "tableFrom": "payload_locked_documents_rels",
@@ -7570,6 +8854,19 @@
           "tableTo": "search",
           "columnsFrom": [
             "search_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_payload_kv_fk": {
+          "name": "payload_locked_documents_rels_payload_kv_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "payload_kv",
+          "columnsFrom": [
+            "payload_kv_id"
           ],
           "columnsTo": [
             "id"
@@ -8048,6 +9345,18 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "posts_id": {
+          "name": "posts_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "players_id": {
+          "name": "players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -8110,6 +9419,36 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "header_rels_posts_id_idx": {
+          "name": "header_rels_posts_id_idx",
+          "columns": [
+            {
+              "expression": "posts_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "header_rels_players_id_idx": {
+          "name": "header_rels_players_id_idx",
+          "columns": [
+            {
+              "expression": "players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -8132,6 +9471,32 @@
           "tableTo": "pages",
           "columnsFrom": [
             "pages_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "header_rels_posts_fk": {
+          "name": "header_rels_posts_fk",
+          "tableFrom": "header_rels",
+          "tableTo": "posts",
+          "columnsFrom": [
+            "posts_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "header_rels_players_fk": {
+          "name": "header_rels_players_fk",
+          "tableFrom": "header_rels",
+          "tableTo": "players",
+          "columnsFrom": [
+            "players_id"
           ],
           "columnsTo": [
             "id"
@@ -8312,6 +9677,18 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "posts_id": {
+          "name": "posts_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "players_id": {
+          "name": "players_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -8374,6 +9751,36 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "footer_rels_posts_id_idx": {
+          "name": "footer_rels_posts_id_idx",
+          "columns": [
+            {
+              "expression": "posts_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "footer_rels_players_id_idx": {
+          "name": "footer_rels_players_id_idx",
+          "columns": [
+            {
+              "expression": "players_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -8402,6 +9809,32 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "footer_rels_posts_fk": {
+          "name": "footer_rels_posts_fk",
+          "tableFrom": "footer_rels",
+          "tableTo": "posts",
+          "columnsFrom": [
+            "posts_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "footer_rels_players_fk": {
+          "name": "footer_rels_players_fk",
+          "tableFrom": "footer_rels",
+          "tableTo": "players",
+          "columnsFrom": [
+            "players_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -8412,16 +9845,6 @@
     }
   },
   "enums": {
-    "public.enum_pages_hero_type": {
-      "name": "enum_pages_hero_type",
-      "schema": "public",
-      "values": [
-        "none",
-        "highImpact",
-        "mediumImpact",
-        "lowImpact"
-      ]
-    },
     "public.enum_pages_hero_links_link_type": {
       "name": "enum_pages_hero_links_link_type",
       "schema": "public",
@@ -8495,22 +9918,22 @@
         "posts"
       ]
     },
-    "public.enum_pages_status": {
-      "name": "enum_pages_status",
-      "schema": "public",
-      "values": [
-        "draft",
-        "published"
-      ]
-    },
-    "public.enum__pages_v_version_hero_type": {
-      "name": "enum__pages_v_version_hero_type",
+    "public.enum_pages_hero_type": {
+      "name": "enum_pages_hero_type",
       "schema": "public",
       "values": [
         "none",
         "highImpact",
         "mediumImpact",
         "lowImpact"
+      ]
+    },
+    "public.enum_pages_status": {
+      "name": "enum_pages_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "published"
       ]
     },
     "public.enum__pages_v_version_hero_links_link_type": {
@@ -8586,6 +10009,16 @@
         "posts"
       ]
     },
+    "public.enum__pages_v_version_hero_type": {
+      "name": "enum__pages_v_version_hero_type",
+      "schema": "public",
+      "values": [
+        "none",
+        "highImpact",
+        "mediumImpact",
+        "lowImpact"
+      ]
+    },
     "public.enum__pages_v_version_status": {
       "name": "enum__pages_v_version_status",
       "schema": "public",
@@ -8604,6 +10037,22 @@
     },
     "public.enum__posts_v_version_status": {
       "name": "enum__posts_v_version_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "published"
+      ]
+    },
+    "public.enum_players_status": {
+      "name": "enum_players_status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "published"
+      ]
+    },
+    "public.enum__players_v_version_status": {
+      "name": "enum__players_v_version_status",
       "schema": "public",
       "values": [
         "draft",
