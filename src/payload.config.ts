@@ -18,6 +18,7 @@ import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { Players } from './collections/players'
+import { Clubs } from './collections/clubs'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -64,7 +65,7 @@ export default buildConfig({
     },
     push: false,
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Comments, Players],
+  collections: [Pages, Posts, Media, Categories, Users, Comments, Players, Clubs],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

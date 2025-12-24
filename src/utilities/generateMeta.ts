@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 
-import type { Page, Post } from '../payload-types'
+import type { Club, Page, Post } from '../payload-types'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 
 export const generateMeta = async (args: {
-  doc: Partial<Page> | Partial<Post>
+  doc: Partial<Page> | Partial<Post> | Partial<Club> | null
 }): Promise<Metadata> => {
   const { doc } = args || {}
 
