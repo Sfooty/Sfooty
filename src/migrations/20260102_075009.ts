@@ -28,8 +28,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum__posts_v_version_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum_players_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__players_v_version_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum_clubs_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum__clubs_v_version_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum_redirects_to_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_forms_confirmation_type" AS ENUM('message', 'redirect');
+  CREATE TYPE "public"."enum_payload_jobs_log_task_slug" AS ENUM('inline', 'schedulePublish');
+  CREATE TYPE "public"."enum_payload_jobs_log_state" AS ENUM('failed', 'succeeded');
+  CREATE TYPE "public"."enum_payload_jobs_task_slug" AS ENUM('inline', 'schedulePublish');
   CREATE TYPE "public"."enum_header_nav_items_link_type" AS ENUM('reference', 'custom');
   CREATE TYPE "public"."enum_footer_nav_items_link_type" AS ENUM('reference', 'custom');
   CREATE TABLE "pages_hero_links" (
@@ -509,6 +514,74 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"autosave" boolean
   );
   
+  CREATE TABLE "clubs_populated_authors" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"name" varchar
+  );
+  
+  CREATE TABLE "clubs" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"club_name" varchar,
+  	"address" varchar,
+  	"founded_year" numeric,
+  	"description" jsonb,
+  	"coach_name" varchar,
+  	"website" varchar,
+  	"trophy_photo_id" integer,
+  	"logo_id" integer,
+  	"jerseys_home_id" integer,
+  	"jerseys_away_id" integer,
+  	"jerseys_third_id" integer,
+  	"published_at" timestamp(3) with time zone,
+  	"meta_title" varchar,
+  	"meta_image_id" integer,
+  	"meta_description" varchar,
+  	"slug" varchar,
+  	"slug_lock" boolean DEFAULT true,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"_status" "enum_clubs_status" DEFAULT 'draft'
+  );
+  
+  CREATE TABLE "_clubs_v_version_populated_authors" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"_uuid" varchar,
+  	"name" varchar
+  );
+  
+  CREATE TABLE "_clubs_v" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"parent_id" integer,
+  	"version_club_name" varchar,
+  	"version_address" varchar,
+  	"version_founded_year" numeric,
+  	"version_description" jsonb,
+  	"version_coach_name" varchar,
+  	"version_website" varchar,
+  	"version_trophy_photo_id" integer,
+  	"version_logo_id" integer,
+  	"version_jerseys_home_id" integer,
+  	"version_jerseys_away_id" integer,
+  	"version_jerseys_third_id" integer,
+  	"version_published_at" timestamp(3) with time zone,
+  	"version_meta_title" varchar,
+  	"version_meta_image_id" integer,
+  	"version_meta_description" varchar,
+  	"version_slug" varchar,
+  	"version_slug_lock" boolean DEFAULT true,
+  	"version_updated_at" timestamp(3) with time zone,
+  	"version_created_at" timestamp(3) with time zone,
+  	"version__status" "enum__clubs_v_version_status" DEFAULT 'draft',
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"latest" boolean,
+  	"autosave" boolean
+  );
+  
   CREATE TABLE "redirects" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"from" varchar NOT NULL,
@@ -721,6 +794,35 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"data" jsonb NOT NULL
   );
   
+  CREATE TABLE "payload_jobs_log" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"executed_at" timestamp(3) with time zone NOT NULL,
+  	"completed_at" timestamp(3) with time zone NOT NULL,
+  	"task_slug" "enum_payload_jobs_log_task_slug" NOT NULL,
+  	"task_i_d" varchar NOT NULL,
+  	"input" jsonb,
+  	"output" jsonb,
+  	"state" "enum_payload_jobs_log_state" NOT NULL,
+  	"error" jsonb
+  );
+  
+  CREATE TABLE "payload_jobs" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"input" jsonb,
+  	"completed_at" timestamp(3) with time zone,
+  	"total_tried" numeric DEFAULT 0,
+  	"has_error" boolean DEFAULT false,
+  	"error" jsonb,
+  	"task_slug" "enum_payload_jobs_task_slug",
+  	"queue" varchar DEFAULT 'default',
+  	"wait_until" timestamp(3) with time zone,
+  	"processing" boolean DEFAULT false,
+  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  );
+  
   CREATE TABLE "payload_locked_documents" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"global_slug" varchar,
@@ -740,11 +842,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"users_id" integer,
   	"comments_id" integer,
   	"players_id" integer,
+  	"clubs_id" integer,
   	"redirects_id" integer,
   	"forms_id" integer,
   	"form_submissions_id" integer,
   	"search_id" integer,
-  	"payload_kv_id" integer
+  	"payload_kv_id" integer,
+  	"payload_jobs_id" integer
   );
   
   CREATE TABLE "payload_preferences" (
@@ -883,6 +987,21 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "_players_v" ADD CONSTRAINT "_players_v_parent_id_players_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."players"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_players_v" ADD CONSTRAINT "_players_v_version_image_id_media_id_fk" FOREIGN KEY ("version_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "_players_v" ADD CONSTRAINT "_players_v_version_meta_image_id_media_id_fk" FOREIGN KEY ("version_meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "clubs_populated_authors" ADD CONSTRAINT "clubs_populated_authors_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."clubs"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "clubs" ADD CONSTRAINT "clubs_trophy_photo_id_media_id_fk" FOREIGN KEY ("trophy_photo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "clubs" ADD CONSTRAINT "clubs_logo_id_media_id_fk" FOREIGN KEY ("logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "clubs" ADD CONSTRAINT "clubs_jerseys_home_id_media_id_fk" FOREIGN KEY ("jerseys_home_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "clubs" ADD CONSTRAINT "clubs_jerseys_away_id_media_id_fk" FOREIGN KEY ("jerseys_away_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "clubs" ADD CONSTRAINT "clubs_jerseys_third_id_media_id_fk" FOREIGN KEY ("jerseys_third_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "clubs" ADD CONSTRAINT "clubs_meta_image_id_media_id_fk" FOREIGN KEY ("meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_clubs_v_version_populated_authors" ADD CONSTRAINT "_clubs_v_version_populated_authors_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_clubs_v"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "_clubs_v" ADD CONSTRAINT "_clubs_v_parent_id_clubs_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."clubs"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_clubs_v" ADD CONSTRAINT "_clubs_v_version_trophy_photo_id_media_id_fk" FOREIGN KEY ("version_trophy_photo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_clubs_v" ADD CONSTRAINT "_clubs_v_version_logo_id_media_id_fk" FOREIGN KEY ("version_logo_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_clubs_v" ADD CONSTRAINT "_clubs_v_version_jerseys_home_id_media_id_fk" FOREIGN KEY ("version_jerseys_home_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_clubs_v" ADD CONSTRAINT "_clubs_v_version_jerseys_away_id_media_id_fk" FOREIGN KEY ("version_jerseys_away_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_clubs_v" ADD CONSTRAINT "_clubs_v_version_jerseys_third_id_media_id_fk" FOREIGN KEY ("version_jerseys_third_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "_clubs_v" ADD CONSTRAINT "_clubs_v_version_meta_image_id_media_id_fk" FOREIGN KEY ("version_meta_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "redirects_rels" ADD CONSTRAINT "redirects_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."redirects"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "redirects_rels" ADD CONSTRAINT "redirects_rels_pages_fk" FOREIGN KEY ("pages_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "redirects_rels" ADD CONSTRAINT "redirects_rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
@@ -905,6 +1024,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "search_rels" ADD CONSTRAINT "search_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."search"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "search_rels" ADD CONSTRAINT "search_rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "search_rels" ADD CONSTRAINT "search_rels_players_fk" FOREIGN KEY ("players_id") REFERENCES "public"."players"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "payload_jobs_log" ADD CONSTRAINT "payload_jobs_log_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."payload_jobs"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_locked_documents"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_pages_fk" FOREIGN KEY ("pages_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;
@@ -913,11 +1033,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_comments_fk" FOREIGN KEY ("comments_id") REFERENCES "public"."comments"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_players_fk" FOREIGN KEY ("players_id") REFERENCES "public"."players"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_clubs_fk" FOREIGN KEY ("clubs_id") REFERENCES "public"."clubs"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_redirects_fk" FOREIGN KEY ("redirects_id") REFERENCES "public"."redirects"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_forms_fk" FOREIGN KEY ("forms_id") REFERENCES "public"."forms"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_form_submissions_fk" FOREIGN KEY ("form_submissions_id") REFERENCES "public"."form_submissions"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_search_fk" FOREIGN KEY ("search_id") REFERENCES "public"."search"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_payload_kv_fk" FOREIGN KEY ("payload_kv_id") REFERENCES "public"."payload_kv"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_payload_jobs_fk" FOREIGN KEY ("payload_jobs_id") REFERENCES "public"."payload_jobs"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_preferences_rels" ADD CONSTRAINT "payload_preferences_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_preferences"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_preferences_rels" ADD CONSTRAINT "payload_preferences_rels_users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "header_nav_items" ADD CONSTRAINT "header_nav_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."header"("id") ON DELETE cascade ON UPDATE no action;
@@ -1082,6 +1204,35 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "_players_v_updated_at_idx" ON "_players_v" USING btree ("updated_at");
   CREATE INDEX "_players_v_latest_idx" ON "_players_v" USING btree ("latest");
   CREATE INDEX "_players_v_autosave_idx" ON "_players_v" USING btree ("autosave");
+  CREATE INDEX "clubs_populated_authors_order_idx" ON "clubs_populated_authors" USING btree ("_order");
+  CREATE INDEX "clubs_populated_authors_parent_id_idx" ON "clubs_populated_authors" USING btree ("_parent_id");
+  CREATE INDEX "clubs_trophy_photo_idx" ON "clubs" USING btree ("trophy_photo_id");
+  CREATE INDEX "clubs_logo_idx" ON "clubs" USING btree ("logo_id");
+  CREATE INDEX "clubs_jerseys_jerseys_home_idx" ON "clubs" USING btree ("jerseys_home_id");
+  CREATE INDEX "clubs_jerseys_jerseys_away_idx" ON "clubs" USING btree ("jerseys_away_id");
+  CREATE INDEX "clubs_jerseys_jerseys_third_idx" ON "clubs" USING btree ("jerseys_third_id");
+  CREATE INDEX "clubs_meta_meta_image_idx" ON "clubs" USING btree ("meta_image_id");
+  CREATE INDEX "clubs_slug_idx" ON "clubs" USING btree ("slug");
+  CREATE INDEX "clubs_updated_at_idx" ON "clubs" USING btree ("updated_at");
+  CREATE INDEX "clubs_created_at_idx" ON "clubs" USING btree ("created_at");
+  CREATE INDEX "clubs__status_idx" ON "clubs" USING btree ("_status");
+  CREATE INDEX "_clubs_v_version_populated_authors_order_idx" ON "_clubs_v_version_populated_authors" USING btree ("_order");
+  CREATE INDEX "_clubs_v_version_populated_authors_parent_id_idx" ON "_clubs_v_version_populated_authors" USING btree ("_parent_id");
+  CREATE INDEX "_clubs_v_parent_idx" ON "_clubs_v" USING btree ("parent_id");
+  CREATE INDEX "_clubs_v_version_version_trophy_photo_idx" ON "_clubs_v" USING btree ("version_trophy_photo_id");
+  CREATE INDEX "_clubs_v_version_version_logo_idx" ON "_clubs_v" USING btree ("version_logo_id");
+  CREATE INDEX "_clubs_v_version_jerseys_version_jerseys_home_idx" ON "_clubs_v" USING btree ("version_jerseys_home_id");
+  CREATE INDEX "_clubs_v_version_jerseys_version_jerseys_away_idx" ON "_clubs_v" USING btree ("version_jerseys_away_id");
+  CREATE INDEX "_clubs_v_version_jerseys_version_jerseys_third_idx" ON "_clubs_v" USING btree ("version_jerseys_third_id");
+  CREATE INDEX "_clubs_v_version_meta_version_meta_image_idx" ON "_clubs_v" USING btree ("version_meta_image_id");
+  CREATE INDEX "_clubs_v_version_version_slug_idx" ON "_clubs_v" USING btree ("version_slug");
+  CREATE INDEX "_clubs_v_version_version_updated_at_idx" ON "_clubs_v" USING btree ("version_updated_at");
+  CREATE INDEX "_clubs_v_version_version_created_at_idx" ON "_clubs_v" USING btree ("version_created_at");
+  CREATE INDEX "_clubs_v_version_version__status_idx" ON "_clubs_v" USING btree ("version__status");
+  CREATE INDEX "_clubs_v_created_at_idx" ON "_clubs_v" USING btree ("created_at");
+  CREATE INDEX "_clubs_v_updated_at_idx" ON "_clubs_v" USING btree ("updated_at");
+  CREATE INDEX "_clubs_v_latest_idx" ON "_clubs_v" USING btree ("latest");
+  CREATE INDEX "_clubs_v_autosave_idx" ON "_clubs_v" USING btree ("autosave");
   CREATE UNIQUE INDEX "redirects_from_idx" ON "redirects" USING btree ("from");
   CREATE INDEX "redirects_updated_at_idx" ON "redirects" USING btree ("updated_at");
   CREATE INDEX "redirects_created_at_idx" ON "redirects" USING btree ("created_at");
@@ -1141,6 +1292,17 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "search_rels_posts_id_idx" ON "search_rels" USING btree ("posts_id");
   CREATE INDEX "search_rels_players_id_idx" ON "search_rels" USING btree ("players_id");
   CREATE UNIQUE INDEX "payload_kv_key_idx" ON "payload_kv" USING btree ("key");
+  CREATE INDEX "payload_jobs_log_order_idx" ON "payload_jobs_log" USING btree ("_order");
+  CREATE INDEX "payload_jobs_log_parent_id_idx" ON "payload_jobs_log" USING btree ("_parent_id");
+  CREATE INDEX "payload_jobs_completed_at_idx" ON "payload_jobs" USING btree ("completed_at");
+  CREATE INDEX "payload_jobs_total_tried_idx" ON "payload_jobs" USING btree ("total_tried");
+  CREATE INDEX "payload_jobs_has_error_idx" ON "payload_jobs" USING btree ("has_error");
+  CREATE INDEX "payload_jobs_task_slug_idx" ON "payload_jobs" USING btree ("task_slug");
+  CREATE INDEX "payload_jobs_queue_idx" ON "payload_jobs" USING btree ("queue");
+  CREATE INDEX "payload_jobs_wait_until_idx" ON "payload_jobs" USING btree ("wait_until");
+  CREATE INDEX "payload_jobs_processing_idx" ON "payload_jobs" USING btree ("processing");
+  CREATE INDEX "payload_jobs_updated_at_idx" ON "payload_jobs" USING btree ("updated_at");
+  CREATE INDEX "payload_jobs_created_at_idx" ON "payload_jobs" USING btree ("created_at");
   CREATE INDEX "payload_locked_documents_global_slug_idx" ON "payload_locked_documents" USING btree ("global_slug");
   CREATE INDEX "payload_locked_documents_updated_at_idx" ON "payload_locked_documents" USING btree ("updated_at");
   CREATE INDEX "payload_locked_documents_created_at_idx" ON "payload_locked_documents" USING btree ("created_at");
@@ -1154,11 +1316,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_locked_documents_rels_users_id_idx" ON "payload_locked_documents_rels" USING btree ("users_id");
   CREATE INDEX "payload_locked_documents_rels_comments_id_idx" ON "payload_locked_documents_rels" USING btree ("comments_id");
   CREATE INDEX "payload_locked_documents_rels_players_id_idx" ON "payload_locked_documents_rels" USING btree ("players_id");
+  CREATE INDEX "payload_locked_documents_rels_clubs_id_idx" ON "payload_locked_documents_rels" USING btree ("clubs_id");
   CREATE INDEX "payload_locked_documents_rels_redirects_id_idx" ON "payload_locked_documents_rels" USING btree ("redirects_id");
   CREATE INDEX "payload_locked_documents_rels_forms_id_idx" ON "payload_locked_documents_rels" USING btree ("forms_id");
   CREATE INDEX "payload_locked_documents_rels_form_submissions_id_idx" ON "payload_locked_documents_rels" USING btree ("form_submissions_id");
   CREATE INDEX "payload_locked_documents_rels_search_id_idx" ON "payload_locked_documents_rels" USING btree ("search_id");
   CREATE INDEX "payload_locked_documents_rels_payload_kv_id_idx" ON "payload_locked_documents_rels" USING btree ("payload_kv_id");
+  CREATE INDEX "payload_locked_documents_rels_payload_jobs_id_idx" ON "payload_locked_documents_rels" USING btree ("payload_jobs_id");
   CREATE INDEX "payload_preferences_key_idx" ON "payload_preferences" USING btree ("key");
   CREATE INDEX "payload_preferences_updated_at_idx" ON "payload_preferences" USING btree ("updated_at");
   CREATE INDEX "payload_preferences_created_at_idx" ON "payload_preferences" USING btree ("created_at");
@@ -1224,6 +1388,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "players" CASCADE;
   DROP TABLE "_players_v_version_populated_authors" CASCADE;
   DROP TABLE "_players_v" CASCADE;
+  DROP TABLE "clubs_populated_authors" CASCADE;
+  DROP TABLE "clubs" CASCADE;
+  DROP TABLE "_clubs_v_version_populated_authors" CASCADE;
+  DROP TABLE "_clubs_v" CASCADE;
   DROP TABLE "redirects" CASCADE;
   DROP TABLE "redirects_rels" CASCADE;
   DROP TABLE "forms_blocks_checkbox" CASCADE;
@@ -1244,6 +1412,8 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "search" CASCADE;
   DROP TABLE "search_rels" CASCADE;
   DROP TABLE "payload_kv" CASCADE;
+  DROP TABLE "payload_jobs_log" CASCADE;
+  DROP TABLE "payload_jobs" CASCADE;
   DROP TABLE "payload_locked_documents" CASCADE;
   DROP TABLE "payload_locked_documents_rels" CASCADE;
   DROP TABLE "payload_preferences" CASCADE;
@@ -1281,8 +1451,13 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum__posts_v_version_status";
   DROP TYPE "public"."enum_players_status";
   DROP TYPE "public"."enum__players_v_version_status";
+  DROP TYPE "public"."enum_clubs_status";
+  DROP TYPE "public"."enum__clubs_v_version_status";
   DROP TYPE "public"."enum_redirects_to_type";
   DROP TYPE "public"."enum_forms_confirmation_type";
+  DROP TYPE "public"."enum_payload_jobs_log_task_slug";
+  DROP TYPE "public"."enum_payload_jobs_log_state";
+  DROP TYPE "public"."enum_payload_jobs_task_slug";
   DROP TYPE "public"."enum_header_nav_items_link_type";
   DROP TYPE "public"."enum_footer_nav_items_link_type";`)
 }
